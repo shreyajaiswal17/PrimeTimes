@@ -10,4 +10,4 @@ By delivering real-time information, the website aims to keep its audience infor
 # Tools Used
 - HTML
 - CSS
-- JS
+- JavaScript
