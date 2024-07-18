@@ -5,3 +5,9 @@
 
 # Objective
 By delivering real-time information, the website aims to keep its audience informed about the latest developments as they happen, ensuring they have access to accurate and relevant news at all times.
+
+
+# Tools Used
+- HTML
+- CSS
+- JS
