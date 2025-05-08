@@ -4,6 +4,7 @@ const HF_API_TOKEN = import.meta.env.VITE_HF_API_TOKEN;
 
 export const checkFakeNews = async (text) => {
   try {
+    
     const response = await axios.post(
       "https://api-inference.huggingface.co/models/mrm8488/bert-tiny-finetuned-fake-news-detection",
       { inputs: text },
