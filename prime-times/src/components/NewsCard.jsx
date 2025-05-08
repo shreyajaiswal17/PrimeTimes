@@ -1,4 +1,4 @@
-// src/components/NewsCard.jsx
+
 const NewsCard = ({ article }) => {
     const { urlToImage, title, description, publishedAt, source, url } = article;
     if (!urlToImage) return null;
