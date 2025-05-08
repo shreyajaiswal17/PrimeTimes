@@ -40,3 +40,16 @@
 .read-the-docs {
   color: #888;
 }
+
+.text-red-600 {
+  color: #dc2626;
+}
+
+.text-green-600 {
+  color: #16a34a;
+}
+
+.news-authenticity {
+  font-style: italic;
+  margin-top: 10px;
+}
