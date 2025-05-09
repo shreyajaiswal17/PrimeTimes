@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { checkFakeNews } from "../utils/fakeNewsCheck"; // adjust path if needed
+import { checkFakeNews } from "../utils/fakeNewsCheck"; // Ensure correct path
 
 const NewsCard = ({ article }) => {
   const { urlToImage, title, description, publishedAt, source, url } = article;
@@ -12,15 +12,31 @@ const NewsCard = ({ article }) => {
   });
 
   useEffect(() => {
+    let isMounted = true;
+
     const check = async () => {
       if (!description && !title) {
         setAuthenticity("❓ Not enough content to verify.");
         return;
       }
-      const result = await checkFakeNews(description || title);
-      setAuthenticity(result);
+
+      try {
+        const result = await checkFakeNews(description || title);
+        if (isMounted) {
+          setAuthenticity(result);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setAuthenticity("❓ Unable to verify authenticity.");
+        }
+      }
     };
+
     check();
+
+    return () => {
+      isMounted = false; // cleanup to avoid setting state on unmounted component
+    };
   }, [description, title]);
 
   return (
@@ -36,7 +52,11 @@ const NewsCard = ({ article }) => {
         <p className="news-desc" id="news-desc">{description}</p>
         <p
           className={`news-authenticity ${
-            authenticity.includes("Fake") ? "text-red-600" : "text-green-600"
+            authenticity.includes("Fake")
+              ? "text-red-600"
+              : authenticity.includes("Real")
+              ? "text-green-600"
+              : "text-yellow-600"
           } text-sm italic mt-2`}
         >
           {authenticity}
@@ -47,3 +67,4 @@ const NewsCard = ({ article }) => {
 };
 
 export default NewsCard;
+

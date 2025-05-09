@@ -1,31 +1,15 @@
-import axios from "axios";
-
-const HF_API_TOKEN = import.meta.env.VITE_HF_API_TOKEN;
-
 export const checkFakeNews = async (text) => {
   try {
-    
-    const response = await axios.post(
-      "https://api-inference.huggingface.co/models/mrm8488/bert-tiny-finetuned-fake-news-detection",
-      { inputs: text },
-      {
-        headers: {
-          Authorization: `Bearer ${HF_API_TOKEN}`,
-        },
-      }
-    );
-    console.log("API response:", response.data);
+    const res = await fetch("http://127.0.0.1:5000/api/fact-check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
 
-
-    const result = response.data[0];
-    const label = result.label;
-    const score = (result.score * 100).toFixed(2);
-
-    return label === "LABEL_1"
-      ? `⚠️ Likely Fake News (${score}%)`
-      : `✅ Likely Real News (${score}%)`;
+    const data = await res.json();
+    return data.result || "❓ Unable to determine authenticity.";
   } catch (error) {
-    console.error("Fake news check failed:", error);
-    return "❓ Unable to verify authenticity.";
+    console.error("Error in fake news check:", error);
+    return "❌ Error connecting to fact-check service.";
   }
 };
