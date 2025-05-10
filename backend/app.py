@@ -63,6 +63,16 @@ import requests
 from bs4 import BeautifulSoup
 import time
 from requests.exceptions import HTTPError
+import re
+from collections import Counter
+
+def get_keywords(text):
+    # Remove stopwords (like "the", "is", etc.)
+    stopwords = set(["the", "is", "in", "on", "and", "a", "of", "to", "won", "has"])
+    words = re.findall(r'\w+', text.lower())
+    return [word for word in words if word not in stopwords]
+
+
 
 app = Flask(__name__)
 CORS(app)
@@ -107,11 +117,15 @@ def fact_check(statement, max_results=5):
             return "❌ Error – An unexpected error occurred."
 
     trusted_hits = 0
+    statement_keywords = get_keywords(statement)
+
     for url in results:
         if is_from_trusted_source(url):
-            title = fetch_snippet(url)
-            if statement.lower().split()[0] in title.lower():
+           title = fetch_snippet(url).lower()
+        matches = sum(1 for word in statement_keywords if word in title)
+        if matches >= len(statement_keywords) * 0.5:  # at least 50% keyword match
                 trusted_hits += 1
+
 
     if trusted_hits >= 2:
         return "✅ Real – Found in multiple trusted sources."
@@ -120,6 +134,7 @@ def fact_check(statement, max_results=5):
     else:
         return "❌ Fake or Unconfirmed – No major sources found."
 
+# API route = a URL + a function that runs on that URL
 @app.route("/api/fact-check", methods=["POST"])
 def api_fact_check():
     data = request.get_json()
@@ -137,3 +152,5 @@ def api_fact_check():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+# This starts the Flask development server. - for development phase
